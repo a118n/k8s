@@ -1,0 +1,5 @@
+---
+- name: Provision k8s nodes
+  hosts: all
+  roles:
+    - k8s_node
