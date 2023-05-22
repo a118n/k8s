@@ -1,2 +1,26 @@
 ---
-# tasks file for k8s_master
+- name: Initialize control plane
+  ansible.builtin.command:
+    cmd: kubeadm init
+    creates: /var/lib/kubelet/config.yaml
+  register: k8s_master_init_result
+
+- name: Debug
+  ansible.builtin.debug:
+    var: k8s_master_init_result
+
+- name: Extract token
+  ansible.builtin.set_fact:
+    k8s_master_join_token: "{{ k8s_master_init_result.stdout | regex_search('--token\\s(\\S*)', '\\1') }}"
+
+- name: Extract CA cert hash
+  ansible.builtin.set_fact:
+    k8s_master_discovery_token_ca_cert_hash: "{{ k8s_master_init_result.stdout | regex_search('--discovery-token-ca-cert-hash\\s(\\S*)', '\\1') }}"
+
+- name: Debug
+  ansible.builtin.debug:
+    var: k8s_master_join_token
+
+- name: Debug
+  ansible.builtin.debug:
+    var: k8s_master_discovery_token_ca_cert_hash

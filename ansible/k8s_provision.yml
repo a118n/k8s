@@ -3,3 +3,8 @@
   hosts: all
   roles:
     - k8s_node
+
+- name: Provision master node
+  hosts: master-01.k8s.internal
+  roles:
+    - k8s_master
