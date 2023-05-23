@@ -1,7 +1,7 @@
 ---
 - name: Initialize control plane
   ansible.builtin.command:
-    cmd: kubeadm init
+    cmd: kubeadm init --control-plane-endpoint master-01.k8s.internal
     creates: /var/lib/kubelet/config.yaml
   register: k8s_master_init_result
 
@@ -24,3 +24,9 @@
 - name: Debug
   ansible.builtin.debug:
     var: k8s_master_discovery_token_ca_cert_hash
+
+- name: Populate local kubeconfig
+  ansible.builtin.fetch:
+    src: /etc/kubernetes/admin.conf
+    dest: ~/.kube/config
+    flat: true
