@@ -1,10 +1,10 @@
 ---
 all:
   children:
-    k8s-master:
+    k8s-masters:
       hosts:
         master-01.k8s.internal:
-    k8s-worker:
+    k8s-workers:
       hosts:
         worker-01.k8s.internal:
         worker-02.k8s.internal:

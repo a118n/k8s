@@ -5,9 +5,9 @@
     creates: /var/lib/kubelet/config.yaml
   register: k8s_master_init_result
 
-- name: Debug
-  ansible.builtin.debug:
-    var: k8s_master_init_result
+# - name: Debug
+#   ansible.builtin.debug:
+#     var: k8s_master_init_result
 
 - name: Extract token
   ansible.builtin.set_fact:
@@ -17,16 +17,34 @@
   ansible.builtin.set_fact:
     k8s_master_discovery_token_ca_cert_hash: "{{ k8s_master_init_result.stdout | regex_search('--discovery-token-ca-cert-hash\\s(\\S*)', '\\1') }}"
 
-- name: Debug
-  ansible.builtin.debug:
-    var: k8s_master_join_token
+# - name: Debug
+#   ansible.builtin.debug:
+#     var: k8s_master_join_token
 
-- name: Debug
-  ansible.builtin.debug:
-    var: k8s_master_discovery_token_ca_cert_hash
+# - name: Debug
+#   ansible.builtin.debug:
+#     var: k8s_master_discovery_token_ca_cert_hash
+
+- name: Set fact
+  ansible.builtin.set_fact:
+    k8s_master_control_plane_endpoint: "{{ ansible_nodename }}"
 
 - name: Populate local kubeconfig
   ansible.builtin.fetch:
     src: /etc/kubernetes/admin.conf
     dest: ~/.kube/config
     flat: true
+
+- name: Install helm (1/2)
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    dest: /root/get_helm.sh
+    mode: "0700"
+    owner: root
+    group: root
+
+- name: Install helm (2/2)
+  ansible.builtin.shell:
+    cmd: /root/get_helm.sh
+    executable: /usr/bin/bash
+    creates: /usr/local/bin/helm

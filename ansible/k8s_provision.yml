@@ -4,7 +4,17 @@
   roles:
     - k8s_node
 
-- name: Provision master node
-  hosts: master-01.k8s.internal
+- name: Provision master nodes
+  hosts: k8s-masters
   roles:
     - k8s_master
+
+- name: Provision worker nodes
+  hosts: k8s-workers
+  roles:
+    - k8s_worker
+
+- name: Install cilium
+  hosts: k8s-masters[0]
+  roles:
+    - cni_cilium

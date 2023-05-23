@@ -7,3 +7,6 @@
   ansible.builtin.systemd:
     name: containerd.service
     state: restarted
+
+- name: Reboot
+  ansible.builtin.reboot:

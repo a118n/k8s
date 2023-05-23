@@ -1,2 +1,18 @@
 ---
-# tasks file for k8s_worker
+# - name: Print var
+#   ansible.builtin.debug:
+#     var: hostvars['master-01.k8s.internal']['k8s_master_control_plane_endpoint']
+
+# - name: Print var
+#   ansible.builtin.debug:
+#     var: hostvars['master-01.k8s.internal']['k8s_master_join_token'][0]
+
+# - name: Print var
+#   ansible.builtin.debug:
+#     var: hostvars['master-01.k8s.internal']['k8s_master_discovery_token_ca_cert_hash'][0]
+
+- name: Join cluster
+  ansible.builtin.command:
+    cmd: "kubeadm join {{ hostvars['master-01.k8s.internal']['k8s_master_control_plane_endpoint'] }}:6443 --token {{ hostvars['master-01.k8s.internal']['k8s_master_join_token'][0] }} --discovery-token-ca-cert-hash {{ hostvars['master-01.k8s.internal']['k8s_master_discovery_token_ca_cert_hash'][0] }}"
+    creates: /var/lib/kubelet/config.yaml
+  when: hostvars['master-01.k8s.internal']['k8s_master_control_plane_endpoint'] is defined and hostvars['master-01.k8s.internal']['k8s_master_join_token'][0] is defined and hostvars['master-01.k8s.internal']['k8s_master_discovery_token_ca_cert_hash'][0] is defined
