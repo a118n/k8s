@@ -31,6 +31,15 @@
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
 
+- name: Deploy hubble
+  ansible.builtin.command:
+    cmd: helm upgrade cilium cilium/cilium --version 1.13.2 --namespace kube-system --reuse-values --set hubble.relay.enabled=true --set hubble.ui.enabled=true --set hubble.tls.auto.enabled=true --set hubble.tls.auto.method=helm --set hubble.tls.auto.certValidityDuration=1095
+  register: cni_cilium_hubble_deployed
+  changed_when: cni_cilium_hubble_deployed.rc == 0
+  when: cni_cilium_deployment_exists.rc != 0
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
 - name: Install cilium-cli
   ansible.builtin.shell:
     cmd: |
@@ -42,3 +51,15 @@
       sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
       rm -f cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
     creates: /usr/local/bin/cilium
+
+- name: Install hubble-cli
+  ansible.builtin.shell:
+    cmd: |
+      export HUBBLE_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/hubble/master/stable.txt)
+      HUBBLE_ARCH=amd64
+      if [ "$(uname -m)" = "aarch64" ]; then HUBBLE_ARCH=arm64; fi
+      curl -L --fail --remote-name-all https://github.com/cilium/hubble/releases/download/$HUBBLE_VERSION/hubble-linux-${HUBBLE_ARCH}.tar.gz{,.sha256sum}
+      sha256sum --check hubble-linux-${HUBBLE_ARCH}.tar.gz.sha256sum
+      sudo tar xzvfC hubble-linux-${HUBBLE_ARCH}.tar.gz /usr/local/bin
+      rm -f hubble-linux-${HUBBLE_ARCH}.tar.gz{,.sha256sum}
+    creates: /usr/local/bin/hubble
