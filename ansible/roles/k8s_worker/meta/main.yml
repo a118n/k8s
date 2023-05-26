@@ -1,7 +1,14 @@
 galaxy_info:
   author: a118n
+  role_name: k8s_worker
+  namespace: a118n
   description: Worker role for K8S cluster
   license: MIT
   min_ansible_version: "2.1"
+  platforms:
+    - name: EL
+      versions:
+        - "8"
+        - "9"
   galaxy_tags: []
 dependencies: []

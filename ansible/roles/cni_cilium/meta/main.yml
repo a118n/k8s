@@ -1,7 +1,14 @@
 galaxy_info:
   author: a118n
-  description: Install cilium
+  role_name: cni_cilium
+  namespace: a118n
+  description: Install Cilium CNI & Hubble
   license: MIT
   min_ansible_version: "2.1"
+  platforms:
+    - name: EL
+      versions:
+        - "8"
+        - "9"
   galaxy_tags: []
 dependencies: []
