@@ -29,3 +29,13 @@
   hosts: k8s-workers
   roles:
     - k8s_worker
+
+- name: Label worker nodes
+  hosts: k8s-master
+  tasks:
+    - name: Label node
+      ansible.builtin.command:
+        cmd: kubectl label node {{ item }} node-role.kubernetes.io/worker=worker
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+      with_items: "{{ groups['k8s-workers'] }}"
