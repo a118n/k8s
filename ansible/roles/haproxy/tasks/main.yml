@@ -1,0 +1,143 @@
+---
+- name: Disable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: stopped
+    enabled: false
+
+- name: Set SELinux mode to permissive
+  ansible.posix.selinux:
+    state: permissive
+    policy: targeted
+
+- name: Install required packages
+  ansible.builtin.dnf:
+    name:
+      - "@Development Tools"
+      - systemd-devel
+      - openssl-devel
+      - pcre2-devel
+      - rsyslog
+    state: present
+
+- name: Download HAProxy source code
+  ansible.builtin.get_url:
+    url: "https://www.haproxy.org/download/{{ haproxy_version[:3] }}/src/haproxy-{{ haproxy_version }}.tar.gz"
+    dest: /tmp/
+    mode: "0644"
+
+- name: Unarchive HAProxy source code
+  ansible.builtin.unarchive:
+    remote_src: true
+    src: "/tmp/haproxy-{{ haproxy_version }}.tar.gz"
+    dest: /tmp/
+
+- name: Make HAProxy
+  community.general.make:
+    chdir: "/tmp/haproxy-{{ haproxy_version }}/"
+    jobs: 2
+    params:
+      TARGET: linux-glibc
+      USE_PCRE2: 1
+      USE_PCRE2_JIT: 1
+      USE_SYSTEMD: 1
+      USE_OPENSSL: 1
+
+- name: Install HAProxy
+  community.general.make:
+    chdir: "/tmp/haproxy-{{ haproxy_version }}/"
+    target: install
+
+- name: Create system user for HAProxy
+  ansible.builtin.user:
+    name: haproxy
+    comment: HAProxy User
+    system: true
+    create_home: false
+
+- name: Create necessary directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  with_items:
+    - /etc/haproxy
+    - /var/lib/haproxy
+    - /var/lib/haproxy/dev/
+    - /etc/systemd/system/haproxy.service.d/
+    - /etc/rsyslog.d/
+
+- name: Create stats file
+  ansible.builtin.file:
+    path: /var/lib/haproxy/stats
+    state: touch
+    mode: "0644"
+
+- name: Create symbolic link to /usr/sbin/haproxy
+  ansible.builtin.file:
+    src: /usr/local/sbin/haproxy
+    dest: /usr/sbin/haproxy
+    state: link
+    owner: root
+    group: root
+
+- name: Copy HAProxy config file
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart HAProxy
+
+- name: Copy rsyslog config file for HAProxy
+  ansible.builtin.copy:
+    src: haproxy.conf
+    dest: /etc/rsyslog.d/haproxy.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy HAProxy systemd unit file
+  ansible.builtin.copy:
+    src: haproxy.service
+    dest: /etc/systemd/system/haproxy.service
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Restart HAProxy
+
+- name: Override max open files for HAProxy
+  ansible.builtin.copy:
+    src: override.conf
+    dest: /etc/systemd/system/haproxy.service.d/override.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart HAProxy
+
+- name: Add kernel parameters
+  ansible.builtin.copy:
+    dest: /etc/sysctl.d/haproxy.conf
+    mode: "0644"
+    owner: root
+    group: root
+    content: |
+      net.ipv4.tcp_max_syn_backlog = 100000
+      net.core.somaxconn = 100000
+  notify: Apply kernel parameters
+
+- name: Start HAProxy
+  ansible.builtin.systemd:
+    name: haproxy.service
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Cleanup
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/tmp/haproxy-{{ haproxy_version }}"
+    - "/tmp/haproxy-{{ haproxy_version }}.tar.gz"

@@ -1,0 +1,49 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+global
+  log 127.0.0.1:514 local0 err
+  log 127.0.0.1:514 local0 warning
+  log 127.0.0.1:514 local0 alert
+  log 127.0.0.1:514 local1 notice
+  # log 127.0.0.1:514 local1 info
+  chroot /var/lib/haproxy
+  user haproxy
+  group haproxy
+  stats timeout 30s
+  maxconn 100000
+  daemon
+
+defaults
+  log global
+  mode http
+  option httplog
+  option dontlognull
+  option http-server-close
+  option forwardfor except 127.0.0.0/8
+  option redispatch
+  retries 1
+  timeout http-request 10s
+  timeout queue 20s
+  timeout connect 5s
+  timeout client 20s
+  timeout server 20s
+  timeout http-keep-alive 10s
+  timeout check 10s
+
+frontend apiserver
+  bind *:6443
+  mode tcp
+  option tcplog
+  default_backend apiserver
+
+backend apiserver
+  option httpchk GET /healthz
+  http-check expect status 200
+  balance {{ haproxy_balance_algorithm }}
+  {% if haproxy_balance_algorithm in ['source', 'uri', 'url_param'] %}
+  hash-type {{ haproxy_hash_type }}
+  {% endif %}
+  mode tcp
+  option ssl-hello-chk
+  {% for server in haproxy_backend_servers %}
+  server {{ server.name }} {{ server.ip }} check fall 3 rise 3
+  {% endfor %}

@@ -1,9 +1,16 @@
 ---
 all:
   children:
-    k8s-masters:
+    k8s-control-plane-lb:
+      hosts:
+        cluster.k8s.internal:
+    k8s-master:
       hosts:
         master-01.k8s.internal:
+    k8s-control-plane:
+      hosts:
+        master-02.k8s.internal:
+        master-03.k8s.internal:
     k8s-workers:
       hosts:
         worker-01.k8s.internal:

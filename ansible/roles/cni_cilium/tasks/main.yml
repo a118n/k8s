@@ -24,7 +24,7 @@
 
 - name: Deploy cilium
   ansible.builtin.command:
-    cmd: helm install cilium cilium/cilium --version 1.13.2 --namespace kube-system
+    cmd: helm install cilium cilium/cilium --version {{ cilium_version }} --namespace kube-system
   register: cni_cilium_deployed
   changed_when: cni_cilium_deployed.rc == 0
   when: cni_cilium_deployment_exists.rc != 0
@@ -33,7 +33,7 @@
 
 - name: Deploy hubble
   ansible.builtin.command:
-    cmd: helm upgrade cilium cilium/cilium --version 1.13.2 --namespace kube-system --reuse-values --set hubble.relay.enabled=true --set hubble.ui.enabled=true --set hubble.tls.auto.enabled=true --set hubble.tls.auto.method=helm --set hubble.tls.auto.certValidityDuration=1095
+    cmd: helm upgrade cilium cilium/cilium --version {{ cilium_version }} --namespace kube-system --reuse-values --set hubble.relay.enabled=true --set hubble.ui.enabled=true --set hubble.tls.auto.enabled=true --set hubble.tls.auto.method=helm --set hubble.tls.auto.certValidityDuration=1095
   register: cni_cilium_hubble_deployed
   changed_when: cni_cilium_hubble_deployed.rc == 0
   when: cni_cilium_deployment_exists.rc != 0

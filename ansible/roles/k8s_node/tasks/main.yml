@@ -4,7 +4,6 @@
     name: "*"
     state: latest
     update_cache: true
-    update_only: true
   notify: Reboot
 
 - name: Remove unneeded packages
@@ -45,7 +44,7 @@
 - name: Disable swap
   ansible.builtin.command:
     cmd: swapoff -a
-  when: k8s_node_swapon.msg != ""
+  when: k8s_node_swapon.stdout != ""
   changed_when: true
 
 - name: Remove swap from /etc/fstab
@@ -88,9 +87,9 @@
     owner: root
     group: root
     content: |
-      net.bridge.bridge-nf-call-iptables  = 1
+      net.bridge.bridge-nf-call-iptables = 1
       net.bridge.bridge-nf-call-ip6tables = 1
-      net.ipv4.ip_forward                 = 1
+      net.ipv4.ip_forward = 1
   notify: Apply kernel parameters
 
 - name: Add docker repo
@@ -133,7 +132,7 @@
       gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
       exclude=kubelet kubeadm kubectl
 
-- name: Disable selinux
+- name: Set SELinux mode to permissive
   ansible.posix.selinux:
     state: permissive
     policy: targeted

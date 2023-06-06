@@ -1,0 +1,19 @@
+---
+- name: Update packages on all k8s nodes
+  hosts: k8s-master:k8s-control-plane:k8s-workers
+  tasks:
+    - name: Check if swap is active
+      ansible.builtin.command:
+        cmd: swapon -s
+      register: k8s_node_swapon
+      changed_when: false
+
+    - name: Debug
+      ansible.builtin.debug:
+        var: k8s_node_swapon
+
+    - name: Disable swap
+      ansible.builtin.command:
+        cmd: swapoff -a
+      when: k8s_node_swapon.stdout != ""
+      changed_when: true

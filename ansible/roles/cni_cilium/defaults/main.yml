@@ -1,2 +1,2 @@
 ---
-# defaults file for cni_cilium
+cilium_version: 1.13.3

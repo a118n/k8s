@@ -1,13 +1,9 @@
 ---
 - name: Initialize control plane
   ansible.builtin.command:
-    cmd: kubeadm init --control-plane-endpoint master-01.k8s.internal
+    cmd: kubeadm init --control-plane-endpoint {{ control_plane_endpoint }}:6443 --upload-certs
     creates: /var/lib/kubelet/config.yaml
   register: k8s_master_init_result
-
-# - name: Debug
-#   ansible.builtin.debug:
-#     var: k8s_master_init_result
 
 - name: Extract token
   ansible.builtin.set_fact:
@@ -17,17 +13,21 @@
   ansible.builtin.set_fact:
     k8s_master_discovery_token_ca_cert_hash: "{{ k8s_master_init_result.stdout | regex_search('--discovery-token-ca-cert-hash\\s(\\S*)', '\\1') }}"
 
-# - name: Debug
-#   ansible.builtin.debug:
-#     var: k8s_master_join_token
-
-# - name: Debug
-#   ansible.builtin.debug:
-#     var: k8s_master_discovery_token_ca_cert_hash
-
-- name: Set fact
+- name: Extract certificate key
   ansible.builtin.set_fact:
-    k8s_master_control_plane_endpoint: "{{ ansible_nodename }}"
+    k8s_master_certificate_key: "{{ k8s_master_init_result.stdout | regex_search('--certificate-key\\s(\\S*)', '\\1') }}"
+
+- name: Show token
+  ansible.builtin.debug:
+    var: k8s_master_join_token
+
+- name: Show CA cert hash
+  ansible.builtin.debug:
+    var: k8s_master_discovery_token_ca_cert_hash
+
+- name: Show certificate key
+  ansible.builtin.debug:
+    var: k8s_master_certificate_key
 
 - name: Populate local kubeconfig
   ansible.builtin.fetch:
