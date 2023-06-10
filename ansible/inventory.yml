@@ -1,7 +1,7 @@
 ---
 all:
   children:
-    k8s-control-plane-lb:
+    load-balancer:
       hosts:
         cluster.k8s.internal:
     k8s-master:

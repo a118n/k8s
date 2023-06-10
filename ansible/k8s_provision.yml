@@ -1,6 +1,6 @@
 ---
-- name: Provision control plane load balancer
-  hosts: k8s-control-plane-lb
+- name: Provision load balancer
+  hosts: load-balancer
   roles:
     - haproxy
 
@@ -38,4 +38,7 @@
         cmd: kubectl label node {{ item }} node-role.kubernetes.io/worker=worker
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
-      with_items: "{{ groups['k8s-workers'] }}"
+      with_items:
+        - "{{ groups['k8s-workers'] }}"
+        - "{{ groups['k8s-control-plane'] }}"
+        - "{{ groups['k8s-master'] }}"
