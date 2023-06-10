@@ -42,3 +42,12 @@
         - "{{ groups['k8s-workers'] }}"
         - "{{ groups['k8s-control-plane'] }}"
         - "{{ groups['k8s-master'] }}"
+
+- name: Install NGINX Ingress controller
+  hosts: k8s-master
+  tasks:
+    - name: Install
+      ansible.builtin.command:
+        cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
