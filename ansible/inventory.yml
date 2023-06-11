@@ -15,3 +15,4 @@ all:
       hosts:
         worker-01.k8s.internal:
         worker-02.k8s.internal:
+        worker-03.k8s.internal:
