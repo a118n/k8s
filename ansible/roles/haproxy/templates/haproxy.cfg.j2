@@ -44,6 +44,38 @@ backend apiserver
   {% endif %}
   mode tcp
   option ssl-hello-chk
-  {% for server in haproxy_backend_servers %}
-  server {{ server.name }} {{ server.ip }} check fall 3 rise 3
+  {% for server in haproxy_api_backend_servers %}
+  server {{ server.name }} {{ server.ip }}:6443 check fall 3 rise 3
+  {% endfor %}
+
+frontend ingress-http
+  bind *:80
+  mode tcp
+  option tcplog
+  default_backend ingress-http
+
+backend ingress-http
+  mode tcp
+  balance {{ haproxy_balance_algorithm }}
+  {% if haproxy_balance_algorithm in ['source', 'uri', 'url_param'] %}
+  hash-type {{ haproxy_hash_type }}
+  {% endif %}
+  {% for server in haproxy_ingress_backend_servers %}
+  server {{ server }} {{ server.ip }}:{{ ingress_nodeport_http }} check fall 3 rise 3
+  {% endfor %}
+
+frontend ingress-https
+  bind *:443
+  mode tcp
+  option tcplog
+  default_backend ingress-https
+
+backend ingress-https
+  mode tcp
+  balance {{ haproxy_balance_algorithm }}
+  {% if haproxy_balance_algorithm in ['source', 'uri', 'url_param'] %}
+  hash-type {{ haproxy_hash_type }}
+  {% endif %}
+  {% for server in haproxy_ingress_backend_servers %}
+  server {{ server }} {{ server.ip }}:{{ ingress_nodeport_https }} check fall 3 rise 3
   {% endfor %}

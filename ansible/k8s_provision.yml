@@ -40,14 +40,12 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
       with_items:
         - "{{ groups['k8s-workers'] }}"
-        - "{{ groups['k8s-control-plane'] }}"
-        - "{{ groups['k8s-master'] }}"
 
 - name: Install NGINX Ingress controller
   hosts: k8s-master
   tasks:
     - name: Install
       ansible.builtin.command:
-        cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
+        cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.service.nodePorts.http={{ ingress_nodeport_http }} --set controller.service.nodePorts.https={{ ingress_nodeport_https }}
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
