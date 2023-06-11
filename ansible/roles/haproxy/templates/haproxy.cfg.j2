@@ -45,7 +45,7 @@ backend apiserver
   mode tcp
   option ssl-hello-chk
   {% for server in haproxy_api_backend_servers %}
-  server {{ server.name }} {{ server.ip }}:6443 check fall 3 rise 3
+  server {{ server }} {{ server }}:6443 check fall 3 rise 3
   {% endfor %}
 
 frontend ingress-http
@@ -61,7 +61,7 @@ backend ingress-http
   hash-type {{ haproxy_hash_type }}
   {% endif %}
   {% for server in haproxy_ingress_backend_servers %}
-  server {{ server }} {{ server.ip }}:{{ ingress_nodeport_http }} check fall 3 rise 3
+  server {{ server }} {{ server }}:{{ ingress_nodeport_http }} check fall 3 rise 3
   {% endfor %}
 
 frontend ingress-https
@@ -77,5 +77,5 @@ backend ingress-https
   hash-type {{ haproxy_hash_type }}
   {% endif %}
   {% for server in haproxy_ingress_backend_servers %}
-  server {{ server }} {{ server.ip }}:{{ ingress_nodeport_https }} check fall 3 rise 3
+  server {{ server }} {{ server }}:{{ ingress_nodeport_https }} check fall 3 rise 3
   {% endfor %}
