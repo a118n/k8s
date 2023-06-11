@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hubble-ingress
+  namespace: kube-system
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: hubble.k8s.internal
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: hubble-ui
+                port:
+                  number: 80

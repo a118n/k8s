@@ -49,3 +49,12 @@
         cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.service.nodePorts.http={{ ingress_nodeport_http }} --set controller.service.nodePorts.https={{ ingress_nodeport_https }}
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Apply additional manifests
+  hosts: k8s-master
+  tasks:
+    - name: kubectl apply
+      ansible.builtin.command:
+        cmd: kubectl apply -f manifests
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
