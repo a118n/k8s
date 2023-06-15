@@ -57,12 +57,6 @@
     - swap
     - none
 
-- name: Disable firewalld
-  ansible.builtin.systemd:
-    name: firewalld
-    state: stopped
-    enabled: false
-
 - name: Configure kernel modules
   ansible.builtin.copy:
     dest: /etc/modules-load.d/k8s.conf

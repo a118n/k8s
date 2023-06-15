@@ -1,10 +1,4 @@
 ---
-- name: Disable firewalld
-  ansible.builtin.systemd:
-    name: firewalld
-    state: stopped
-    enabled: false
-
 - name: Set SELinux mode to permissive
   ansible.posix.selinux:
     state: permissive
