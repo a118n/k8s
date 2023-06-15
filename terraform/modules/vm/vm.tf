@@ -19,11 +19,17 @@ resource "libvirt_volume" "vm_volume" {
 }
 
 resource "libvirt_domain" "vm_domain" {
-  name       = var.vm_name
-  memory     = var.vm_memory
-  vcpu       = var.vm_vcpus
+  name   = var.vm_name
+  memory = var.vm_memory
+  vcpu   = var.vm_vcpus
+  cpu {
+    mode = "host-passthrough"
+  }
+  video {
+    type = "virtio"
+  }
   qemu_agent = true
-  autostart  = true
+  autostart  = false
 
   cloudinit = libvirt_cloudinit_disk.vm_cloudinit.id
 
