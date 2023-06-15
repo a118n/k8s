@@ -51,10 +51,9 @@
         KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Apply additional manifests
-  hosts: k8s-master
+  hosts: localhost
+  connection: local
   tasks:
     - name: kubectl apply
       ansible.builtin.command:
         cmd: kubectl apply -f manifests
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
