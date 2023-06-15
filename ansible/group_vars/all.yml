@@ -1,8 +1,5 @@
 ansible_user: root
 ansible_ssh_user: root
-ansible_password: fghbjhb
-ansible_ssh_password: fghbjhb
-ansible_become_password: fghbjhb
 
 control_plane_endpoint: cluster.k8s.internal
 cilium_version: 1.13.3
