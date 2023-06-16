@@ -6,13 +6,12 @@ Some preliminary steps are required on the host (Fedora):
 ### Install & configure libvirt
 ```
 sudo dnf install -y @virtualization
-echo 'mode = "legacy"' | sudo tee -a /etc/libvirt/libvirt.conf
 sudo usermod -aG libvirt $USER
 sudo systemctl enable --now libvirtd
 ```
 
 ### Install libvirt hooks
-In order to correctly resolve DNS names of VMs while using systemd-resolved we need to install libvirt hooks to utilize split DNS:
+In order to correctly resolve DNS names of VMs while using systemd-resolved we need to install libvirt hook:
 
 ```
 sudo dnf install -y make publicsuffix-list
