@@ -37,8 +37,3 @@ module "k8s_cluster" {
 
   depends_on = [libvirt_pool.k8s, libvirt_network.k8s]
 }
-
-output "k8s_cluster_info" {
-  # Splat expression only works with lists, sets, and tuples, but module_k8s_node is a map
-  value = values(module.k8s_cluster)[*].vm_info
-}
