@@ -3,16 +3,21 @@
 ## Prepare the host
 Some preliminary steps are required on the host (Fedora):
 
-### Install & configure libvirt
+### Disable SELinux
+```
+sudo grubby --update-kernel ALL --args selinux=0
+```
+
+### Install libvirt
 ```
 sudo dnf install -y @virtualization
 sudo usermod -aG libvirt $USER
+echo 'VIRTNETWORKD_ARGS=' | sudo tee /etc/sysconfig/virtnetworkd
 sudo systemctl enable --now libvirtd
 ```
 
-### Install libvirt hooks
+### Install libvirt hook
 In order to correctly resolve DNS names of VMs while using systemd-resolved we need to install libvirt hook:
-
 ```
 sudo dnf install -y make publicsuffix-list
 sudo mkdir -p /etc/libvirt/hooks/network.d
@@ -38,12 +43,6 @@ terraform apply -auto-approve
 ```
 
 ## Ansible
-Let's install Ansible first:
-```
-sudo dnf install -y python3-pip
-pip install --user ansible ansible-lint
-```
-
 Now let's provision our k8s cluster:
 ```
 cd ansible
