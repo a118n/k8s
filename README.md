@@ -12,6 +12,7 @@ sudo grubby --update-kernel ALL --args selinux=0
 ```
 sudo dnf install -y @virtualization
 sudo usermod -aG libvirt $USER
+# This is a temporary workaround due to a bug in systemd 253.5
 echo 'VIRTNETWORKD_ARGS=' | sudo tee /etc/sysconfig/virtnetworkd
 sudo systemctl enable --now libvirtd
 ```
