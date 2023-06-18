@@ -21,7 +21,6 @@ resource "libvirt_network" "k8s" {
   }
 }
 
-# # K8S Cluster
 module "k8s_cluster" {
   source = "./modules/vm"
 
