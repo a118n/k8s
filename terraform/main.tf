@@ -32,7 +32,7 @@ module "k8s_cluster" {
   vm_vcpus     = each.value.cpu
   image_path   = var.vm_image_path
   network_name = libvirt_network.k8s.name
-  network_id   = null
+  network_id   = libvirt_network.k8s.id
 
   depends_on = [libvirt_pool.k8s, libvirt_network.k8s]
 }

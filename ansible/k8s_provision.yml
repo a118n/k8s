@@ -56,4 +56,4 @@
   tasks:
     - name: kubectl apply
       ansible.builtin.command:
-        cmd: kubectl apply -f manifests
+        cmd: sleep 20 && kubectl apply -f manifests
