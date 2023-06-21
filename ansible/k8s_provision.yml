@@ -55,5 +55,5 @@
   connection: local
   tasks:
     - name: kubectl apply
-      ansible.builtin.command:
+      ansible.builtin.shell:
         cmd: sleep 20 && kubectl apply -f manifests
