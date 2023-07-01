@@ -46,7 +46,16 @@
   tasks:
     - name: Install
       ansible.builtin.command:
-        cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.service.nodePorts.http={{ ingress_nodeport_http }} --set controller.service.nodePorts.https={{ ingress_nodeport_https }}
+        cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.service.nodePorts.http={{ ingress_nodeport_http }} --set controller.service.nodePorts.https={{ ingress_nodeport_https }} --set enable-ssl-passthrough=true
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Install ArgoCD
+  hosts: k8s-master
+  tasks:
+    - name: Install
+      ansible.builtin.shell:
+        cmd: kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f - && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
 
@@ -56,4 +65,4 @@
   tasks:
     - name: kubectl apply
       ansible.builtin.shell:
-        cmd: sleep 20 && kubectl apply -f manifests
+        cmd: sleep 30 && kubectl apply -f manifests
