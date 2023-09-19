@@ -1,0 +1,53 @@
+---
+- name: Check if vmetrics repo exists
+  ansible.builtin.shell:
+    cmd: set -o pipefail && helm repo list | grep victoriametrics
+  changed_when: false
+  ignore_errors: true
+  register: vmetrics_repo_exists
+
+- name: Add vmetrics repo
+  ansible.builtin.command:
+    cmd: helm repo add vm https://victoriametrics.github.io/helm-charts/
+  register: vmetrics_repo_added
+  changed_when: vmetrics_repo_added.rc == 0
+  when: vmetrics_repo_exists.rc != 0
+
+- name: Check if vmetrics is deployed
+  ansible.builtin.shell:
+    cmd: set -o pipefail && helm list -n monitoring | grep victoria-metrics-k8s-stack
+  changed_when: false
+  ignore_errors: true
+  register: vmetrics_deployment_exists
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Create namespace
+  ansible.builtin.shell:
+    cmd: kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Copy victoria-metrics-k8s-stack.yml
+  ansible.builtin.copy:
+    src: victoria-metrics-k8s-stack.yml
+    dest: /root/victoria-metrics-k8s-stack.yml
+
+- name: Copy vmsingle-pv.yml
+  ansible.builtin.copy:
+    src: vmsingle-pv.yml
+    dest: /root/vmsingle-pv.yml
+
+- name: Create PV for VMSingle
+  ansible.builtin.command:
+    cmd: kubectl apply -f vmsingle-pv.yml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  # when: vmetrics_deployment_exists.rc != 0
+
+- name: Deploy VMetrics stack
+  ansible.builtin.shell:
+    cmd: helm install victoria-metrics-k8s-stack vm/victoria-metrics-k8s-stack -f victoria-metrics-k8s-stack.yml -n monitoring
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  # when: vmetrics_deployment_exists.rc != 0
