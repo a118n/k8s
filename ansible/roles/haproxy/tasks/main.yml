@@ -1,4 +1,19 @@
 ---
+- name: Update system
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_cache: true
+  notify: Reboot
+
+- name: Remove unneeded packages
+  ansible.builtin.dnf:
+    autoremove: true
+  notify: Reboot
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
 - name: Set SELinux mode to permissive
   ansible.posix.selinux:
     state: permissive

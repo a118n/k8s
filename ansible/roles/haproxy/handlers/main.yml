@@ -8,3 +8,6 @@
     name: haproxy.service
     state: restarted
     daemon_reload: true
+
+- name: Reboot
+  ansible.builtin.reboot:
