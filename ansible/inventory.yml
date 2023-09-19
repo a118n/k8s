@@ -6,13 +6,13 @@ all:
         cluster.k8s.internal:
     k8s-master:
       hosts:
-        master-01.k8s.internal:
+        node-01.k8s.internal:
     k8s-control-plane:
       hosts:
-        master-02.k8s.internal:
-        master-03.k8s.internal:
+        node-02.k8s.internal:
+        node-03.k8s.internal:
     k8s-workers:
       hosts:
-        worker-01.k8s.internal:
-        worker-02.k8s.internal:
-        worker-03.k8s.internal:
+        node-04.k8s.internal:
+        node-05.k8s.internal:
+        node-06.k8s.internal:
