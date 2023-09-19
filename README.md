@@ -12,8 +12,6 @@ sudo grubby --update-kernel ALL --args selinux=0
 ```
 sudo dnf install -y @virtualization
 sudo usermod -aG libvirt $USER
-# This is a temporary workaround due to a bug in systemd 253.5
-echo 'VIRTNETWORKD_ARGS=' | sudo tee /etc/sysconfig/virtnetworkd
 sudo systemctl enable --now libvirtd
 ```
 
@@ -44,8 +42,37 @@ terraform apply -auto-approve
 ```
 
 ## Ansible
-Now let's provision our k8s cluster:
+Let's provision our k8s cluster:
 ```
-cd ansible
+cd ../ansible
 ansible-playbook k8s_provision.yml
 ```
+
+## Local DNS
+In order to properly utilize Ingress, add cluster records to /etc/hosts:
+```
+echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') cluster.k8s.internal" | sudo tee -a /etc/hosts
+echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') argocd.k8s.internal" | sudo tee -a /etc/hosts
+echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') hubble.k8s.internal" | sudo tee -a /etc/hosts
+```
+
+Now we should be able to access the cluster:
+```
+kubectl cluster-info
+```
+
+ArgoCD:
+https://argocd.k8s.internal
+
+Hubble UI:
+https://hubble.k8s.internal
+
+Of course, when we deploy anything else via Ingress, we'll have to add these records as well.
+
+## ArgoCD
+Let's get default admin password first:
+```
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+Afterwards we can login with username `admin` and password from the previous step.
