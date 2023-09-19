@@ -2,34 +2,34 @@ vm_spec = {
   "cluster" = {
     cpu = 1
     hdd = 1
-    ram = 1024
+    ram = 2048
   },
-  "master-01" = {
+  "node-01" = {
     cpu = 2
     hdd = 1
     ram = 2048
   },
-  "master-02" = {
-    cpu = 2
-    hdd = 1
-    ram = 2048
-  }
-  "master-03" = {
+  "node-02" = {
     cpu = 2
     hdd = 1
     ram = 2048
   },
-  "worker-01" = {
+  "node-03" = {
     cpu = 2
     hdd = 1
     ram = 2048
   },
-  "worker-02" = {
+  "node-04" = {
     cpu = 2
     hdd = 1
     ram = 2048
   },
-  "worker-03" = {
+  "node-05" = {
+    cpu = 2
+    hdd = 1
+    ram = 2048
+  },
+  "node-06" = {
     cpu = 2
     hdd = 1
     ram = 2048
