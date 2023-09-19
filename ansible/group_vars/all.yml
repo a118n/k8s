@@ -2,18 +2,18 @@ ansible_user: root
 ansible_ssh_user: root
 
 control_plane_endpoint: cluster.k8s.internal
-cilium_version: 1.13.3
-haproxy_version: 2.8.0
+cilium_version: 1.14.2
+haproxy_version: 2.8.3
 haproxy_use_ssl: false
 haproxy_balance_algorithm: source
 haproxy_hash_type: consistent
 haproxy_api_backend_servers:
-  - master-01.k8s.internal
-  - master-02.k8s.internal
-  - master-03.k8s.internal
+  - node-01.k8s.internal
+  - node-02.k8s.internal
+  - node-03.k8s.internal
 haproxy_ingress_backend_servers:
-  - worker-01.k8s.internal
-  - worker-02.k8s.internal
-  - worker-03.k8s.internal
+  - node-04.k8s.internal
+  - node-05.k8s.internal
+  - node-06.k8s.internal
 ingress_nodeport_http: 30080
 ingress_nodeport_https: 30443
