@@ -2,7 +2,6 @@ variable "vm_spec" {
   type = map(object({
     cpu = number
     ram = number
-    hdd = number
   }))
 }
 
