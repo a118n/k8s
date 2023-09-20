@@ -11,11 +11,19 @@ data "template_file" "user_data" {
   }
 }
 
-resource "libvirt_volume" "vm_volume" {
-  name   = "${var.vm_name}.qcow2"
+resource "libvirt_volume" "os_volume" {
+  name   = "${var.vm_name}-os.qcow2"
   source = var.image_path
   pool   = var.pool_name
   format = "qcow2"
+}
+
+resource "libvirt_volume" "data_volume" {
+  for_each = var.disks
+  name     = "${var.vm_name}-${each.key}.qcow2"
+  pool     = var.pool_name
+  format   = "qcow2"
+  size     = each.value.size
 }
 
 resource "libvirt_domain" "vm_domain" {
@@ -34,9 +42,15 @@ resource "libvirt_domain" "vm_domain" {
   cloudinit = libvirt_cloudinit_disk.vm_cloudinit.id
 
   disk {
-    volume_id = libvirt_volume.vm_volume.id
+    volume_id = libvirt_volume.os_volume.id
   }
 
+  dynamic "disk" {
+    for_each = libvirt_volume.data_volume
+    content {
+      volume_id = disk.value.id
+    }
+  }
   network_interface {
     hostname       = var.vm_name
     network_name   = var.network_name

@@ -33,6 +33,7 @@ module "k8s_cluster" {
   image_path   = var.vm_image_path
   network_name = libvirt_network.k8s.name
   network_id   = libvirt_network.k8s.id
+  disks        = each.value.disks
 
   depends_on = [libvirt_pool.k8s, libvirt_network.k8s]
 }

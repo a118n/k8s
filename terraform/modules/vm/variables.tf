@@ -32,3 +32,10 @@ variable "network_name" {
   type        = string
   description = "Existing network name for VM"
 }
+
+variable "disks" {
+  type = map(object({
+    size = number
+  }))
+  description = "Extra disks"
+}
