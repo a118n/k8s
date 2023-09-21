@@ -1,33 +1,48 @@
 ---
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family | lower }}.yml"
+
 - name: Update system
   ansible.builtin.dnf:
     name: "*"
     state: latest
     update_cache: true
+  when: ansible_os_family == "RedHat"
+  notify: Reboot
+
+- name: Update system
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: true
+  when: ansible_os_family == "Debian"
   notify: Reboot
 
 - name: Remove unneeded packages
   ansible.builtin.dnf:
     autoremove: true
+  when: ansible_os_family == "RedHat"
+  notify: Reboot
+
+- name: Remove unneeded packages
+  ansible.builtin.apt:
+    autoremove: true
+  when: ansible_os_family == "Debian"
   notify: Reboot
 
 - name: Flush handlers
   ansible.builtin.meta: flush_handlers
 
+- name: Install required packages
+  ansible.builtin.package:
+    name: "{{ required_packages }}"
+    state: present
+
 - name: Set SELinux mode to permissive
   ansible.posix.selinux:
     state: permissive
     policy: targeted
-
-- name: Install required packages
-  ansible.builtin.dnf:
-    name:
-      - "@Development Tools"
-      - systemd-devel
-      - openssl-devel
-      - pcre2-devel
-      - rsyslog
-    state: present
+  when: ansible_os_family == "RedHat"
 
 - name: Download HAProxy source code
   ansible.builtin.get_url:

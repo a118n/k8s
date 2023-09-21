@@ -67,7 +67,7 @@
       ansible.builtin.shell:
         cmd: sleep 30 && kubectl apply -f manifests
 
-- name: Install VictoriaMetrics
+- name: Install VictoriaMetrics Stack
   hosts: k8s-master
   roles:
     - vmetrics

@@ -192,6 +192,9 @@ rdt_config_file = ""
 [plugins."io.containerd.snapshotter.v1.aufs"]
 root_path = ""
 
+[plugins."io.containerd.snapshotter.v1.btrfs"]
+root_path = ""
+
 [plugins."io.containerd.snapshotter.v1.devmapper"]
 async_remove = false
 base_image_size = ""
@@ -205,7 +208,9 @@ root_path = ""
 root_path = ""
 
 [plugins."io.containerd.snapshotter.v1.overlayfs"]
+mount_options = []
 root_path = ""
+sync_remove = false
 upperdir_label = false
 
 [plugins."io.containerd.snapshotter.v1.zfs"]

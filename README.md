@@ -27,6 +27,14 @@ sudo systemctl restart libvirtd.service
 ```
 
 ### Download OS image
+Choose between Debian 12:
+```
+curl -LO https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
+sudo mv debian-12-generic-amd64.qcow2 /var/lib/libvirt/images/
+qemu-img resize /var/lib/libvirt/images/debian-12-generic-amd64.qcow2 30G
+```
+
+Or Rocky Linux 9:
 ```
 curl -LO https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2
 sudo mv Rocky-9-GenericCloud-Base.latest.x86_64.qcow2 /var/lib/libvirt/images/
@@ -34,6 +42,16 @@ qemu-img resize /var/lib/libvirt/images/Rocky-9-GenericCloud-Base.latest.x86_64.
 ```
 
 ## Terraform
+Change variable `vm_image_path` in `terraform/variables.tf` to image path from previous step.
+For example:
+```
+variable "vm_image_path" {
+  type        = string
+  description = "Absolute path to the image used for VM provisioning"
+  default     = "/var/lib/libvirt/images/debian-12-generic-amd64.qcow2"
+}
+```
+
 Now we can deploy our infrastructure using Terraform:
 ```
 cd terraform

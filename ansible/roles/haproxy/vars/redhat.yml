@@ -1,0 +1,7 @@
+---
+required_packages:
+  - "@Development Tools"
+  - systemd-devel
+  - openssl-devel
+  - pcre2-devel
+  - rsyslog

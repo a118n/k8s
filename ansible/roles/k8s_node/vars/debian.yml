@@ -1,0 +1,9 @@
+---
+required_packages:
+  - tar
+  - git
+  - bash-completion
+  - curl
+  - gnupg
+  - ca-certificates
+  - apt-transport-https

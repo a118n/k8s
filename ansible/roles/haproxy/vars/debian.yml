@@ -1,0 +1,9 @@
+---
+required_packages:
+  - build-essential
+  - pkg-config
+  - libsystemd-dev
+  - libssl-dev
+  - libpcre2-dev
+  - zlib1g-dev
+  - rsyslog
