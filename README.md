@@ -1,7 +1,7 @@
-# Deploy local k8s cluster on KVM (libvirt) using Terraform and Ansible
+# Deploy local K8S cluster on KVM (libvirt) using Terraform and Ansible
 
 ## Prepare the host
-Some preliminary steps are required on the host (Fedora):
+Some preliminary steps are required on the host. Fedora, in this example.
 
 ### Disable SELinux
 ```
@@ -60,7 +60,7 @@ terraform apply -auto-approve
 ```
 
 ## Ansible
-Let's provision our k8s cluster:
+Let's provision our K8S cluster:
 ```
 cd ../ansible
 ansible-playbook k8s_provision.yml
