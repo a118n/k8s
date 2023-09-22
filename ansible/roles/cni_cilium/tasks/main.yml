@@ -10,7 +10,6 @@
 - name: Add cilium repo
   ansible.builtin.command:
     cmd: helm repo add cilium https://helm.cilium.io/
-    executable: /usr/bin/bash
   register: cni_cilium_repo_added
   changed_when: cni_cilium_repo_added.rc == 0
   when: cni_cilium_repo_exists.rc != 0
