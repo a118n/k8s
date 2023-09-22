@@ -1,0 +1,39 @@
+---
+- name: Check if cert-manager repo exists
+  ansible.builtin.shell:
+    cmd: set -o pipefail && helm repo list | grep jetstack
+    executable: /usr/bin/bash
+  changed_when: false
+  ignore_errors: true
+  register: cert_manager_repo_exists
+
+- name: Add cert-manager repo
+  ansible.builtin.command:
+    cmd: helm repo add jetstack https://charts.jetstack.io
+  register: cert_manager_repo_added
+  changed_when: cert_manager_repo_added.rc == 0
+  when: cert_manager_repo_exists.rc != 0
+
+- name: Update helm cache
+  ansible.builtin.command:
+    cmd: helm repo update
+  when: cert_manager_repo_exists.rc != 0
+
+- name: Check if cert-manager is deployed
+  ansible.builtin.shell:
+    cmd: set -o pipefail && helm list -n cert-manager | grep cert-manager
+    executable: /usr/bin/bash
+  changed_when: false
+  ignore_errors: true
+  register: cert_manager_deployment_exists
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Deploy cert-manager
+  ansible.builtin.command:
+    cmd: helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --version v{{ cert_manager_version }} --set installCRDs=true
+  register: cert_manager_deployed
+  changed_when: cert_manager_deployed.rc == 0
+  when: cert_manager_deployment_exists.rc != 0
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf

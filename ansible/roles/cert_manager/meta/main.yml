@@ -1,0 +1,17 @@
+galaxy_info:
+  author: a118n
+  role_name: cert_manager
+  namespace: a118n
+  description: Install cert-manager
+  license: MIT
+  min_ansible_version: "2.1"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+  galaxy_tags: []
+dependencies: []
