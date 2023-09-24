@@ -37,3 +37,49 @@
   when: cert_manager_deployment_exists.rc != 0
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Get CA PK from host
+  delegate_to: localhost
+  connection: local
+  become: true
+  ansible.builtin.shell:
+    cmd: "set -o pipefail && cat /etc/pki/tls/private/{{ pki_ca_pk_name }} | base64 --wrap=0"
+    executable: /usr/bin/bash
+  register: pki_ca_pk_encoded
+
+- name: Get CA cert from host
+  delegate_to: localhost
+  connection: local
+  become: true
+  ansible.builtin.shell:
+    cmd: "set -o pipefail && cat /etc/pki/ca-trust/source/anchors/{{ pki_ca_cert_name }} | base64 --wrap=0"
+    executable: /usr/bin/bash
+  register: pki_ca_cert_encoded
+
+- name: Copy ca-key-pair manifest
+  ansible.builtin.template:
+    src: ca-key-pair.yml.j2
+    dest: /root/ca-key-pair.yml
+    owner: root
+    group: root
+    mode: "0640"
+
+- name: Apply ca-key-pair manifest
+  ansible.builtin.command:
+    cmd: kubectl apply -f ca-key-pair.yml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Copy ca-issuer manifest
+  ansible.builtin.copy:
+    src: ca-issuer.yml
+    dest: /root/ca-issuer.yml
+    owner: root
+    group: root
+    mode: "0640"
+
+- name: Apply ca-issuer manifest
+  ansible.builtin.command:
+    cmd: kubectl apply -f ca-issuer.yml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf

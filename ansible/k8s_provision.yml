@@ -50,6 +50,18 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
 
+- name: Generate CA certificate
+  hosts: localhost
+  connection: local
+  become: true
+  roles:
+    - pki_ca
+
+- name: Install cert-manager
+  hosts: k8s-master
+  roles:
+    - cert_manager
+
 - name: Install ArgoCD
   hosts: k8s-master
   tasks:

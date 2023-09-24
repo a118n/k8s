@@ -308,10 +308,8 @@ grafana:
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
     ingressClassName: nginx
     # Values can be templated
-    annotations:
-      { kubernetes.io/ingress.class: nginx }
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
+    annotations: { cert-manager.io/cluster-issuer: ca-issuer }
+
     labels: {}
     path: /
     # pathType is only for k8s > 1.19
@@ -333,10 +331,10 @@ grafana:
     #       name: ssl-redirect
     #       port:
     #         name: service
-    tls: []
-    #  - secretName: grafana-ingress-tls
-    #    hosts:
-    #      - grafana.domain.com
+    tls:
+      - secretName: grafana-ingress-tls
+        hosts:
+          - grafana.k8s.internal
 
   vmServiceScrape:
     # wheter we should create a service scrape resource for grafana
