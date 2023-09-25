@@ -63,7 +63,7 @@ terraform apply -auto-approve
 Let's provision our K8S cluster:
 ```
 cd ../ansible
-ansible-playbook k8s_provision.yml
+ansible-playbook k8s_provision.yml --ask-become-pass
 ```
 
 ## Local DNS
@@ -73,6 +73,7 @@ echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); prin
 echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') argocd.k8s.internal" | sudo tee -a /etc/hosts
 echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') hubble.k8s.internal" | sudo tee -a /etc/hosts
 echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') grafana.k8s.internal" | sudo tee -a /etc/hosts
+echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') vmagent.k8s.internal" | sudo tee -a /etc/hosts
 ```
 
 Now we should be able to access the cluster:
@@ -87,7 +88,10 @@ Hubble UI:
 https://hubble.k8s.internal
 
 Grafana:
-http://grafana.k8s.internal
+https://grafana.k8s.internal
+
+VMAgent:
+https://vmagent.k8s.internal/targets
 
 Of course, when we deploy anything else via Ingress, we'll have to add these records as well.
 
