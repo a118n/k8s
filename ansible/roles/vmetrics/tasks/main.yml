@@ -45,11 +45,11 @@
     cmd: kubectl apply -f vmsingle-pv.yml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-  # when: vmetrics_deployment_exists.rc != 0
+  when: vmetrics_deployment_exists.rc != 0
 
 - name: Deploy VMetrics stack
   ansible.builtin.shell:
     cmd: helm install victoria-metrics-k8s-stack vm/victoria-metrics-k8s-stack -f victoria-metrics-k8s-stack.yml -n monitoring
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-  # when: vmetrics_deployment_exists.rc != 0
+  when: vmetrics_deployment_exists.rc != 0
