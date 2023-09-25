@@ -24,17 +24,6 @@
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
 
-- name: Create namespace
-  ansible.builtin.shell:
-    cmd: kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-
-- name: Copy victoria-metrics-k8s-stack.yml
-  ansible.builtin.copy:
-    src: victoria-metrics-k8s-stack.yml
-    dest: /root/victoria-metrics-k8s-stack.yml
-
 - name: Copy vmsingle-pv.yml
   ansible.builtin.copy:
     src: vmsingle-pv.yml
@@ -47,9 +36,14 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   when: vmetrics_deployment_exists.rc != 0
 
+- name: Copy victoria-metrics-k8s-stack.yml
+  ansible.builtin.copy:
+    src: victoria-metrics-k8s-stack.yml
+    dest: /root/victoria-metrics-k8s-stack.yml
+
 - name: Deploy VMetrics stack
   ansible.builtin.shell:
-    cmd: helm install victoria-metrics-k8s-stack vm/victoria-metrics-k8s-stack -f victoria-metrics-k8s-stack.yml -n monitoring
+    cmd: helm upgrade --install victoria-metrics-k8s-stack vm/victoria-metrics-k8s-stack --namespace monitoring --create-namespace --values victoria-metrics-k8s-stack.yml
   environment:
     KUBECONFIG: /etc/kubernetes/admin.conf
-  when: vmetrics_deployment_exists.rc != 0
+  # when: vmetrics_deployment_exists.rc != 0
