@@ -1,4 +1,11 @@
 ---
+- name: Generate CA certificate
+  hosts: localhost
+  connection: local
+  become: true
+  roles:
+    - pki_ca
+
 - name: Provision load balancer
   hosts: load-balancer
   roles:
@@ -50,13 +57,6 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
 
-- name: Generate CA certificate
-  hosts: localhost
-  connection: local
-  become: true
-  roles:
-    - pki_ca
-
 - name: Install cert-manager
   hosts: k8s-master
   roles:
@@ -75,7 +75,7 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: kubectl apply
+    - name: Apply manifests
       ansible.builtin.shell:
         cmd: sleep 30 && kubectl apply -f manifests
 
