@@ -4,7 +4,7 @@
     path: "/etc/pki/tls/private/{{ pki_ca_pk_name }}"
     owner: root
     group: root
-    mode: "0400"
+    mode: "0444"
 
 - name: Create certificate signing request (CSR) for CA certificate
   community.crypto.openssl_csr_pipe:
