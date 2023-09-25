@@ -1,0 +1,17 @@
+galaxy_info:
+  author: a118n
+  role_name: pki_ca_rollout
+  namespace: a118n
+  description: Rollout generated CA certificate to nodes
+  license: MIT
+  min_ansible_version: "2.1"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+  galaxy_tags: []
+dependencies: []

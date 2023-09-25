@@ -6,6 +6,11 @@
   roles:
     - pki_ca
 
+- name: Rollout CA certificate
+  hosts: all
+  roles:
+    - pki_ca_rollout
+
 - name: Provision load balancer
   hosts: load-balancer
   roles:

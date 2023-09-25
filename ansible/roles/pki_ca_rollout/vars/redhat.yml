@@ -1,0 +1,4 @@
+---
+ca_path: /etc/pki/ca-trust/source/anchors
+pk_path: /etc/pki/tls/private
+update_ca_command: update-ca-trust

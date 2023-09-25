@@ -1,0 +1,4 @@
+---
+ca_path: /usr/local/share/ca-certificates
+pk_path: /etc/ssl/private
+update_ca_command: update-ca-certificates
