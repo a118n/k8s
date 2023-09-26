@@ -1,4 +1,4 @@
 ---
 - name: Update CA trust
   ansible.builtin.command:
-    cmd: update-ca-trust
+    cmd: "{{ pki_ca_update_ca_command }}"

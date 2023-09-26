@@ -1,4 +1,0 @@
----
-pki_ca_pk_name: "ansible.ca.key"
-pki_ca_common_name: "Ansible CA"
-pki_ca_cert_name: "ansible.ca.pem"

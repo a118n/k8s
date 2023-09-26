@@ -2,7 +2,7 @@ galaxy_info:
   author: a118n
   role_name: pki_ca_rollout
   namespace: a118n
-  description: Rollout generated CA certificate to nodes
+  description: Rollout CA certificate to remote host
   license: MIT
   min_ansible_version: "2.1"
   platforms:
@@ -13,5 +13,10 @@ galaxy_info:
       versions:
         - "8"
         - "9"
+    - name: Fedora
+      versions:
+        - "37"
+        - "38"
+        - "39"
   galaxy_tags: []
 dependencies: []

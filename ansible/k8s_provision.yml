@@ -6,10 +6,15 @@
   roles:
     - pki_ca
 
-- name: Rollout CA certificate
+- name: Rollout CA certificate to all nodes
   hosts: all
   roles:
     - pki_ca_rollout
+
+- name: Prepare certificates for kubeadm
+  hosts: k8s-master
+  roles:
+    - pki_k8s
 
 - name: Provision load balancer
   hosts: load-balancer

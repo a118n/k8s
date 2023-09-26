@@ -1,42 +1,15 @@
 ---
-- name: Create PKI directory structure
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
+- name: Copy kubeadm config
+  ansible.builtin.template:
+    src: kubeadm.yml.j2
+    dest: /root/kubeadm.yml
     owner: root
     group: root
-    mode: "0755"
-  loop:
-    - /etc/kubernetes/pki
-    - /etc/kubernetes/pki/etcd
-
-- name: Copy CA certificate
-  ansible.builtin.copy:
-    src: "/etc/pki/ca-trust/source/anchors/{{ pki_ca_cert_name }}"
-    dest: "{{ item.path }}/{{ item.name }}"
-    owner: root
-    group: root
-    mode: "0444"
-  loop:
-    - { path: /etc/kubernetes/pki, name: ca.crt }
-    - { path: /etc/kubernetes/pki/etcd, name: ca.crt }
-    - { path: /etc/kubernetes/pki, name: front-proxy-ca.crt }
-
-- name: Copy CA PK
-  ansible.builtin.copy:
-    src: "/etc/pki/tls/private/{{ pki_ca_pk_name }}"
-    dest: "{{ item.path }}/{{ item.name }}"
-    owner: root
-    group: root
-    mode: "0440"
-  loop:
-    - { path: /etc/kubernetes/pki, name: ca.key }
-    - { path: /etc/kubernetes/pki/etcd, name: ca.key }
-    - { path: /etc/kubernetes/pki, name: front-proxy-ca.key }
+    mode: "0640"
 
 - name: Initialize control plane
   ansible.builtin.command:
-    cmd: kubeadm init --control-plane-endpoint {{ control_plane_endpoint }}:6443 --upload-certs
+    cmd: kubeadm init --config /root/kubeadm.yml --upload-certs
     creates: /var/lib/kubelet/config.yaml
   register: k8s_master_init_result
 
@@ -64,11 +37,28 @@
   ansible.builtin.debug:
     var: k8s_master_certificate_key
 
-- name: Populate local kubeconfig
+- name: Populate host OS kubeconfig
   ansible.builtin.fetch:
     src: /etc/kubernetes/admin.conf
     dest: ~/.kube/config
     flat: true
+
+- name: Create .kube directory
+  ansible.builtin.file:
+    path: /root/.kube/
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Populate local kubeconfig
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0640"
 
 - name: Install helm (1/2)
   ansible.builtin.get_url:

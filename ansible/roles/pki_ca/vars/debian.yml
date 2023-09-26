@@ -1,0 +1,4 @@
+---
+pki_ca_system_ca_path: /usr/local/share/ca-certificates
+pki_ca_system_pk_path: /etc/ssl/private
+pki_ca_update_ca_command: update-ca-certificates

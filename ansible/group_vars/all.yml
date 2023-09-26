@@ -18,6 +18,6 @@ haproxy_ingress_backend_servers:
   - node-06.k8s.internal
 ingress_nodeport_http: 30080
 ingress_nodeport_https: 30443
-pki_ca_common_name: k8s.internal Certificate Authority
+pki_ca_common_name: K8S.INTERNAL-CA
+pki_ca_cert_name: k8s.internal.crt
 pki_ca_pk_name: k8s.internal.key
-pki_ca_cert_name: k8s.internal.pem

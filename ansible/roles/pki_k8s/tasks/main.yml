@@ -1,0 +1,41 @@
+---
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family | lower }}.yml"
+
+- name: Create PKI directory structure
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - /etc/kubernetes/
+    - /etc/kubernetes/pki
+    - /etc/kubernetes/pki/etcd
+
+- name: Copy CA certificate
+  ansible.builtin.copy:
+    src: "{{ pki_k8s_system_ca_path }}/{{ pki_ca_cert_name }}"
+    dest: "{{ item.path }}/{{ item.name }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0444"
+  loop:
+    - { path: /etc/kubernetes/pki, name: ca.crt }
+    - { path: /etc/kubernetes/pki/etcd, name: ca.crt }
+    - { path: /etc/kubernetes/pki, name: front-proxy-ca.crt }
+
+- name: Copy CA PK
+  ansible.builtin.copy:
+    src: "{{ pki_k8s_system_pk_path }}/{{ pki_ca_pk_name }}"
+    dest: "{{ item.path }}/{{ item.name }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0440"
+  loop:
+    - { path: /etc/kubernetes/pki, name: ca.key }
+    - { path: /etc/kubernetes/pki/etcd, name: ca.key }
+    - { path: /etc/kubernetes/pki, name: front-proxy-ca.key }

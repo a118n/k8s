@@ -1,8 +1,8 @@
 galaxy_info:
   author: a118n
-  role_name: pki_ca
+  role_name: pki_k8s
   namespace: a118n
-  description: Generate self-signed CA certificate
+  description: Prepare certificates for k8s deployment
   license: MIT
   min_ansible_version: "2.1"
   platforms:
@@ -13,10 +13,5 @@ galaxy_info:
       versions:
         - "8"
         - "9"
-    - name: Fedora
-      versions:
-        - "37"
-        - "38"
-        - "39"
   galaxy_tags: []
 dependencies: []

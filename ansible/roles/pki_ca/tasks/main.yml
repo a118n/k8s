@@ -1,14 +1,18 @@
 ---
-- name: Create private key with password protection
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ ansible_os_family | lower }}.yml"
+
+- name: Generate CA PK
   community.crypto.openssl_privatekey:
-    path: "/etc/pki/tls/private/{{ pki_ca_pk_name }}"
+    path: "{{ pki_ca_system_pk_path }}/{{ pki_ca_pk_name }}"
+    state: present
     owner: root
     group: root
     mode: "0444"
 
-- name: Create certificate signing request (CSR) for CA certificate
+- name: Create CSR for CA certificate
   community.crypto.openssl_csr_pipe:
-    privatekey_path: "/etc/pki/tls/private/{{ pki_ca_pk_name }}"
+    privatekey_path: "{{ pki_ca_system_pk_path }}/{{ pki_ca_pk_name }}"
     common_name: "{{ pki_ca_common_name }}"
     use_common_name_for_san: false
     basic_constraints:
@@ -21,8 +25,13 @@
 
 - name: Create self-signed CA certificate from CSR
   community.crypto.x509_certificate:
-    path: "/etc/pki/ca-trust/source/anchors/{{ pki_ca_cert_name }}"
+    path: "{{ pki_ca_system_ca_path }}/{{ pki_ca_cert_name }}"
     csr_content: "{{ ca_csr.csr }}"
-    privatekey_path: "/etc/pki/tls/private/{{ pki_ca_pk_name }}"
+    privatekey_path: "{{ pki_ca_system_pk_path }}/{{ pki_ca_pk_name }}"
+    selfsigned_not_after: +3650d # 10 years
     provider: selfsigned
   notify: Update CA trust
+
+- name: Set host_os fact
+  ansible.builtin.set_fact:
+    host_os: "{{ ansible_os_family }}"
