@@ -21,8 +21,6 @@
   changed_when: false
   ignore_errors: true
   register: cni_cilium_deployment_exists
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Deploy cilium
   ansible.builtin.command:
@@ -30,8 +28,6 @@
   register: cni_cilium_deployed
   changed_when: cni_cilium_deployed.rc == 0
   when: cni_cilium_deployment_exists.rc != 0
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Deploy hubble
   ansible.builtin.command:
@@ -39,8 +35,6 @@
   register: cni_cilium_hubble_deployed
   changed_when: cni_cilium_hubble_deployed.rc == 0
   when: cni_cilium_deployment_exists.rc != 0
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Install cilium-cli
   ansible.builtin.shell:

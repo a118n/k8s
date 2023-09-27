@@ -53,8 +53,6 @@
     - name: Label node
       ansible.builtin.command:
         cmd: kubectl label node {{ item }} node-role.kubernetes.io/worker=worker
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
       with_items:
         - "{{ groups['k8s-workers'] }}"
 
@@ -64,8 +62,6 @@
     - name: Install
       ansible.builtin.command:
         cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.service.nodePorts.http={{ ingress_nodeport_http }} --set controller.service.nodePorts.https={{ ingress_nodeport_https }} --set enable-ssl-passthrough=true
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
 
 - name: Install cert-manager
   hosts: k8s-master
@@ -77,9 +73,8 @@
   tasks:
     - name: Install
       ansible.builtin.shell:
-        cmd: kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f - && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-      environment:
-        KUBECONFIG: /etc/kubernetes/admin.conf
+        cmd: set -o pipefail && kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f - && kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        executable: /usr/bin/bash
 
 - name: Apply additional manifests
   hosts: localhost
