@@ -21,29 +21,37 @@
   changed_when: false
   ignore_errors: true
   register: vmetrics_deployment_exists
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
+
+- name: Create namespace
+  ansible.builtin.shell:
+    cmd: set -o pipefail && kubectl create namespace monitoring --dry-run=client -o yaml | kubectl apply -f -
+    executable: /usr/bin/bash
+
+- name: Create secret with etcd certs
+  ansible.builtin.shell:
+    cmd: set -o pipefail && kubectl create secret generic etcd-certs -n monitoring --from-file=/etc/kubernetes/pki/etcd/server.crt --from-file=/etc/kubernetes/pki/etcd/server.key --dry-run=client -o yaml | kubectl apply -f -
+    executable: /usr/bin/bash
 
 - name: Copy vmsingle-pv.yml
   ansible.builtin.copy:
     src: vmsingle-pv.yml
     dest: /root/vmsingle-pv.yml
+    owner: root
+    group: root
+    mode: "0640"
 
 - name: Create PV for VMSingle
   ansible.builtin.command:
     cmd: kubectl apply -f vmsingle-pv.yml
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  when: vmetrics_deployment_exists.rc != 0
 
 - name: Copy victoria-metrics-k8s-stack.yml
   ansible.builtin.copy:
     src: victoria-metrics-k8s-stack.yml
     dest: /root/victoria-metrics-k8s-stack.yml
+    owner: root
+    group: root
+    mode: "0640"
 
 - name: Deploy VMetrics stack
-  ansible.builtin.shell:
+  ansible.builtin.command:
     cmd: helm upgrade --install victoria-metrics-k8s-stack vm/victoria-metrics-k8s-stack --namespace monitoring --create-namespace --values victoria-metrics-k8s-stack.yml
-  environment:
-    KUBECONFIG: /etc/kubernetes/admin.conf
-  # when: vmetrics_deployment_exists.rc != 0

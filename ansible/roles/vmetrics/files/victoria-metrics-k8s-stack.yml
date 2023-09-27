@@ -192,6 +192,16 @@ vmagent:
       cluster: k8s.internal
     extraArgs:
       promscrape.streamParse: "true"
+    volumes:
+      - name: etcd-certs
+        secret:
+          secretName: etcd-certs
+    containers:
+      - name: vmagent
+        volumeMounts:
+          - name: etcd-certs
+            readOnly: true
+            mountPath: /var/run/secrets/kubernetes.io/etcd-certs
   ingress:
     enabled: true
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
@@ -560,6 +570,8 @@ kubeEtcd:
         tlsConfig:
           insecureSkipVerify: true
           caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          certFile: /var/run/secrets/kubernetes.io/etcd-certs/server.crt
+          keyFile: /var/run/secrets/kubernetes.io/etcd-certs/server.key
 
 ## Component scraping kube scheduler
 ##
@@ -610,8 +622,8 @@ kubeProxy:
 
   service:
     enabled: true
-    port: 10256
-    targetPort: 10256
+    port: 10249
+    targetPort: 10249
     # selector:
     #   k8s-app: kube-proxy
 
@@ -624,7 +636,7 @@ kubeProxy:
         # bearerTokenSecret:
         #   key: ""
         port: http-metrics
-        scheme: https
+        scheme: http
         tlsConfig:
           insecureSkipVerify: true
           caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
