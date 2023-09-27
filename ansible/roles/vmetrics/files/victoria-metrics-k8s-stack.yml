@@ -132,10 +132,10 @@ vmsingle:
     enabled: false
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
     # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
-    # ingressClassName: nginx
+    ingressClassName: nginx
     # Values can be templated
     annotations:
-      {}
+      { cert-manager.io/cluster-issuer: ca-issuer }
       # kubernetes.io/ingress.class: nginx
       # kubernetes.io/tls-acme: "true"
     labels: {}
@@ -144,7 +144,7 @@ vmsingle:
     pathType: Prefix
 
     hosts:
-      - vmsingle.domain.com
+      - vmsingle.k8s.internal
     ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
     extraPaths: []
     # - path: /*
@@ -159,7 +159,10 @@ vmsingle:
     #       name: ssl-redirect
     #       port:
     #         name: service
-    tls: []
+    tls:
+      - secretName: vmsingle-ingress-tls
+        hosts:
+          - vmsingle.k8s.internal
     #  - secretName: vmsingle-ingress-tls
     #    hosts:
     #      - vmsingle.domain.com
@@ -437,6 +440,7 @@ kubeApiServer:
         port: https
         scheme: https
         tlsConfig:
+          insecureSkipVerify: true
           caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
           serverName: kubernetes
     jobLabel: component
@@ -479,6 +483,7 @@ kubeControllerManager:
         port: http-metrics
         scheme: https
         tlsConfig:
+          insecureSkipVerify: true
           caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
           serverName: kubernetes
 
@@ -553,6 +558,7 @@ kubeEtcd:
         port: http-metrics
         scheme: https
         tlsConfig:
+          insecureSkipVerify: true
           caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
 ## Component scraping kube scheduler
@@ -587,6 +593,7 @@ kubeScheduler:
         port: http-metrics
         scheme: https
         tlsConfig:
+          insecureSkipVerify: true
           caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
 ## Component scraping kube proxy
@@ -619,6 +626,7 @@ kubeProxy:
         port: http-metrics
         scheme: https
         tlsConfig:
+          insecureSkipVerify: true
           caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
 ## install vm operator crds
