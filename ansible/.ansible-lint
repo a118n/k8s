@@ -1,0 +1,6 @@
+---
+# .ansible-lint
+
+skip_list:
+  - yaml[line-length]
+  - no-changed-when
