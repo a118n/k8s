@@ -16,9 +16,8 @@ scheduler:
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
-# kubelet specific options here
 
 ---
 apiVersion: kubeproxy.config.k8s.io/v1alpha1
 kind: KubeProxyConfiguration
-# kube-proxy specific options here
+bindAddress: "0.0.0.0"
