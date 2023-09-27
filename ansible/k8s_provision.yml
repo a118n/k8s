@@ -12,7 +12,7 @@
     - pki_ca_rollout
 
 - name: Prepare certificates for kubeadm
-  hosts: k8s-master
+  hosts: k8s-master:k8s-control-plane:k8s-workers
   roles:
     - pki_k8s
 
