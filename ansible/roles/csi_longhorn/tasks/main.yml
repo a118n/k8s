@@ -1,0 +1,55 @@
+---
+- name: Check if Longhorn repo exists
+  ansible.builtin.shell:
+    cmd: set -o pipefail && helm repo list | grep longhorn
+    executable: /usr/bin/bash
+  changed_when: false
+  ignore_errors: true
+  register: csi_longhorn_repo_exists
+
+- name: Add Longhorn repo
+  ansible.builtin.command:
+    cmd: helm repo add longhorn https://charts.longhorn.io
+  register: csi_longhorn_repo_added
+  changed_when: csi_longhorn_repo_added.rc == 0
+  when: csi_longhorn_repo_exists.rc != 0
+
+- name: Update helm cache
+  ansible.builtin.command:
+    cmd: helm repo update
+  when: csi_longhorn_repo_exists.rc != 0
+
+- name: Check if Longhorn is deployed
+  ansible.builtin.shell:
+    cmd: set -o pipefail && helm list -n longhorn | grep longhorn
+    executable: /usr/bin/bash
+  changed_when: false
+  ignore_errors: true
+  register: csi_longhorn_deployment_exists
+
+- name: Copy longhorn-helm-values.yml
+  ansible.builtin.copy:
+    src: longhorn-helm-values.yml
+    dest: /root/longhorn-helm-values.yml
+    owner: root
+    group: root
+    mode: "0640"
+
+- name: Add label to worker nodes
+  ansible.builtin.command:
+    cmd: "kubectl label node {{ item }} node.longhorn.io/create-default-disk='config'"
+  with_items:
+    - "{{ groups['k8s-workers'] }}"
+
+- name: Add annotation worker to nodes
+  ansible.builtin.command:
+    cmd: "kubectl annotate --overwrite node {{ item }} node.longhorn.io/default-disks-config='[{ \"name\": \"longhorn\", \"path\": \"/mnt/longhorn\", \"allowScheduling\": true }]'"
+  with_items:
+    - "{{ groups['k8s-workers'] }}"
+
+- name: Deploy Longhorn
+  ansible.builtin.command:
+    cmd: helm upgrade --install longhorn longhorn/longhorn --namespace longhorn --create-namespace --version {{ longhorn_version }} --values longhorn-helm-values.yml
+  register: csi_longhorn_deployed
+  changed_when: csi_longhorn_deployed.rc == 0
+  when: csi_longhorn_deployment_exists.rc != 0

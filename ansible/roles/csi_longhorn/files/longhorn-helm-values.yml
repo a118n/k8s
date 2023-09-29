@@ -1,0 +1,74 @@
+---
+persistence:
+  defaultClass: true
+  defaultFsType: xfs
+
+ingress:
+  enabled: true
+  ingressClassName: "nginx"
+  host: longhorn.k8s.internal
+  tls: true
+  secureBackends: false
+  tlsSecret: longhorn-tls-secret
+  path: /
+  annotations:
+    cert-manager.io/cluster-issuer: ca-issuer
+
+defaultSettings:
+  backupTarget: ~
+  backupTargetCredentialSecret: ~
+  allowRecurringJobWhileVolumeDetached: ~
+  createDefaultDiskLabeledNodes: true
+  defaultDataPath: ~
+  defaultDataLocality: ~
+  replicaSoftAntiAffinity: ~
+  replicaAutoBalance: ~
+  storageOverProvisioningPercentage: ~
+  storageMinimalAvailablePercentage: ~
+  upgradeChecker: ~
+  defaultReplicaCount: ~
+  defaultLonghornStaticStorageClass: ~
+  backupstorePollInterval: ~
+  failedBackupTTL: ~
+  restoreVolumeRecurringJobs: ~
+  recurringSuccessfulJobsHistoryLimit: ~
+  recurringFailedJobsHistoryLimit: ~
+  supportBundleFailedHistoryLimit: ~
+  taintToleration: ~
+  systemManagedComponentsNodeSelector: ~
+  priorityClass: ~
+  autoSalvage: ~
+  autoDeletePodWhenVolumeDetachedUnexpectedly: ~
+  disableSchedulingOnCordonedNode: ~
+  replicaZoneSoftAntiAffinity: ~
+  nodeDownPodDeletionPolicy: ~
+  nodeDrainPolicy: ~
+  replicaReplenishmentWaitInterval: ~
+  concurrentReplicaRebuildPerNodeLimit: ~
+  concurrentVolumeBackupRestorePerNodeLimit: ~
+  disableRevisionCounter: ~
+  systemManagedPodsImagePullPolicy: ~
+  allowVolumeCreationWithDegradedAvailability: ~
+  autoCleanupSystemGeneratedSnapshot: ~
+  concurrentAutomaticEngineUpgradePerNodeLimit: ~
+  backingImageCleanupWaitInterval: ~
+  backingImageRecoveryWaitInterval: ~
+  guaranteedEngineManagerCPU: ~
+  guaranteedReplicaManagerCPU: ~
+  kubernetesClusterAutoscalerEnabled: ~
+  orphanAutoDeletion: ~
+  storageNetwork: ~
+  deletingConfirmationFlag: ~
+  engineReplicaTimeout: ~
+  snapshotDataIntegrity: ~
+  snapshotDataIntegrityImmediateCheckAfterSnapshotCreation: ~
+  snapshotDataIntegrityCronjob: ~
+  removeSnapshotsDuringFilesystemTrim: ~
+  fastReplicaRebuildEnabled: ~
+  replicaFileSyncHttpClientTimeout: ~
+  logLevel: ~
+  backupCompressionMethod: ~
+  backupConcurrentLimit: ~
+  restoreConcurrentLimit: ~
+  v2DataEngine: ~
+  offlineReplicaRebuilding: ~

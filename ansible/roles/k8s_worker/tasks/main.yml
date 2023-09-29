@@ -1,4 +1,26 @@
 ---
+- name: Create new partitions
+  community.general.parted:
+    device: /dev/vdb
+    number: 1
+    label: gpt
+    fs_type: xfs
+    state: present
+
+- name: Format partitions
+  community.general.filesystem:
+    dev: "/dev/vdb1"
+    fstype: xfs
+    opts: "-L LONGHORN"
+    state: present
+
+- name: Mount up partitions
+  ansible.posix.mount:
+    path: "/mnt/longhorn"
+    src: "LABEL=LONGHORN"
+    fstype: xfs
+    state: mounted
+
 - name: Join cluster
   ansible.builtin.command:
     cmd: "kubeadm join {{ control_plane_endpoint }}:6443 --token {{ hostvars['node-01.k8s.internal']['k8s_master_join_token'][0] }} --discovery-token-ca-cert-hash {{ hostvars['node-01.k8s.internal']['k8s_master_discovery_token_ca_cert_hash'][0] }}"

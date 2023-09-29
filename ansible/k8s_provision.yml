@@ -63,6 +63,11 @@
       ansible.builtin.command:
         cmd: helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace --set controller.service.nodePorts.http={{ ingress_nodeport_http }} --set controller.service.nodePorts.https={{ ingress_nodeport_https }} --set enable-ssl-passthrough=true
 
+- name: Install Longhorn CSI
+  hosts: k8s-master
+  roles:
+    - csi_longhorn
+
 - name: Install cert-manager
   hosts: k8s-master
   roles:

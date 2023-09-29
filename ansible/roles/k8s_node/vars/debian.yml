@@ -7,3 +7,5 @@ required_packages:
   - gnupg
   - ca-certificates
   - apt-transport-https
+  - parted
+  - xfsprogs

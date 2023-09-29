@@ -74,6 +74,7 @@ echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); prin
 echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') hubble.k8s.internal" | sudo tee -a /etc/hosts
 echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') grafana.k8s.internal" | sudo tee -a /etc/hosts
 echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') vmagent.k8s.internal" | sudo tee -a /etc/hosts
+echo "$(virsh net-dhcp-leases k8s | grep cluster | awk '{gsub("/24","",$5); print $5}') longhorn.k8s.internal" | sudo tee -a /etc/hosts
 ```
 
 Now we should be able to access the cluster:

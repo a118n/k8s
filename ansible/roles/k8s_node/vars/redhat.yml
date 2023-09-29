@@ -4,3 +4,4 @@ required_packages:
   - git
   - bash-completion
   - curl
+  - parted

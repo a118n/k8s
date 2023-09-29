@@ -1,0 +1,17 @@
+galaxy_info:
+  author: a118n
+  role_name: csi_longhorn
+  namespace: a118n
+  description: Install Longhorn CSI
+  license: MIT
+  min_ansible_version: "2.1"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: EL
+      versions:
+        - "8"
+        - "9"
+  galaxy_tags: []
+dependencies: []
