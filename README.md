@@ -94,6 +94,9 @@ https://grafana.k8s.internal
 VMAgent:
 https://vmagent.k8s.internal/targets
 
+Longhorn:
+https://longhorn.k8s.internal
+
 Of course, when we deploy anything else via Ingress, we'll have to add these records as well.
 
 ## ArgoCD
