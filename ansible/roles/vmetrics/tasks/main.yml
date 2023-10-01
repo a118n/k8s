@@ -32,18 +32,6 @@
     cmd: set -o pipefail && kubectl create secret generic etcd-certs -n monitoring --from-file=/etc/kubernetes/pki/etcd/server.crt --from-file=/etc/kubernetes/pki/etcd/server.key --dry-run=client -o yaml | kubectl apply -f -
     executable: /usr/bin/bash
 
-- name: Copy vmsingle-pv.yml
-  ansible.builtin.copy:
-    src: vmsingle-pv.yml
-    dest: /root/vmsingle-pv.yml
-    owner: root
-    group: root
-    mode: "0640"
-
-- name: Create PV for VMSingle
-  ansible.builtin.command:
-    cmd: kubectl apply -f vmsingle-pv.yml
-
 - name: Copy victoria-metrics-k8s-stack.yml
   ansible.builtin.copy:
     src: victoria-metrics-k8s-stack.yml

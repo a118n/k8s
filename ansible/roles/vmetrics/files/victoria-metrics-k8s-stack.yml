@@ -122,7 +122,7 @@ vmsingle:
     replicaCount: 1
     extraArgs: {}
     storage:
-      storageClassName: local-storage
+      storageClassName: longhorn
       accessModes:
         - ReadWriteOnce
       resources:
