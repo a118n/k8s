@@ -23,21 +23,21 @@ vm_spec = {
     cpu = 2
     ram = 2048
     disks = {
-      "data-01" = { size = 21474836480 }
+      "data-01" = { size = 53687091200 }
     }
   },
   "node-05" = {
     cpu = 2
     ram = 2048
     disks = {
-      "data-01" = { size = 21474836480 }
+      "data-01" = { size = 53687091200 }
     }
   },
   "node-06" = {
     cpu = 2
     ram = 2048
     disks = {
-      "data-01" = { size = 21474836480 }
+      "data-01" = { size = 53687091200 }
     }
   }
 }
