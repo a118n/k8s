@@ -12,6 +12,7 @@ sudo grubby --update-kernel ALL --args selinux=0
 ```
 sudo dnf install -y @virtualization
 sudo usermod -aG libvirt $USER
+echo "export LIBVIRT_DEFAULT_URI='qemu:///system'" >> ~/.bashrc && source ~/.bashrc
 sudo systemctl enable --now libvirtd
 ```
 
@@ -58,7 +59,13 @@ terraform apply -auto-approve
 ```
 
 ## Ansible
-Let's provision our K8S cluster:
+### Install required libraries
+To generate CA certificate we'll need cryptography Python package:
+```
+sudo dnf install python3-cryptography
+```
+
+### Provision cluster:
 ```
 cd ../ansible
 ansible-playbook k8s_provision.yml --ask-become-pass
