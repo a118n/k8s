@@ -2,9 +2,9 @@ ansible_user: root
 ansible_ssh_user: root
 
 control_plane_endpoint: cluster.k8s.internal
-cilium_version: 1.14.2
-cert_manager_version: 1.13.1
-longhorn_version: 1.5.1
+cilium_version: 1.14.4
+cert_manager_version: 1.13.2
+longhorn_version: 1.5.2
 haproxy_version: 2.8.3
 haproxy_use_ssl: false
 haproxy_balance_algorithm: source
