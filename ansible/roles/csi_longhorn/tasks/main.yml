@@ -1,4 +1,18 @@
 ---
+- name: Check if open-iscsi is installed
+  ansible.builtin.shell:
+    cmd: set -o pipefail && kubectl get pod -n longhorn | grep longhorn-iscsi-installation
+    executable: /usr/bin/bash
+  changed_when: false
+  ignore_errors: true
+  register: csi_longhorn_open_iscsi_exists
+
+- name: Install open-iscsi
+  ansible.builtin.shell:
+    cmd: "set -o pipefail && kubectl create namespace longhorn --dry-run=client -o yaml | kubectl apply -f - && kubectl apply -n longhorn -f https://raw.githubusercontent.com/longhorn/longhorn/v{{ longhorn_version }}/deploy/prerequisite/longhorn-iscsi-installation.yaml"
+    executable: /usr/bin/bash
+  when: csi_longhorn_open_iscsi_exists.rc != 0
+
 - name: Check if Longhorn repo exists
   ansible.builtin.shell:
     cmd: set -o pipefail && helm repo list | grep longhorn
