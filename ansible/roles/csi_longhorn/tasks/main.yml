@@ -55,7 +55,7 @@
   with_items:
     - "{{ groups['k8s-workers'] }}"
 
-- name: Add annotation worker to nodes
+- name: Add annotation to worker nodes
   ansible.builtin.command:
     cmd: "kubectl annotate --overwrite node {{ item }} node.longhorn.io/default-disks-config='[{ \"name\": \"longhorn\", \"path\": \"/mnt/longhorn\", \"allowScheduling\": true }]'"
   with_items:
