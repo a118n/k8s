@@ -31,13 +31,13 @@ sudo systemctl restart libvirtd.service
 Choose between Debian 12:
 ```
 sudo curl -L -o /var/lib/libvirt/images/debian-12-generic-amd64.qcow2 https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
-qemu-img resize /var/lib/libvirt/images/debian-12-generic-amd64.qcow2 30G
+sudo qemu-img resize /var/lib/libvirt/images/debian-12-generic-amd64.qcow2 30G
 ```
 
 Or Rocky Linux 9:
 ```
 sudo curl -L -o /var/lib/libvirt/images/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2 https://dl.rockylinux.org/pub/rocky/9/images/x86_64/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2
-qemu-img resize /var/lib/libvirt/images/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2 30G
+sudo qemu-img resize /var/lib/libvirt/images/Rocky-9-GenericCloud-Base.latest.x86_64.qcow2 30G
 ```
 
 ## Terraform
